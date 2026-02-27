@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% block title %}Preview Profile — DEET{% endblock %}
+
+{% block stepper %}
+<div class="stepper">
+  <div class="s-step">
+    <div class="s-circle done">✓</div>
+    <div class="s-label">Upload</div>
+  </div>
+  <div class="s-line done"></div>
+  <div class="s-step">
+    <div class="s-circle active">✏</div>
+    <div class="s-label active">Preview</div>
+  </div>
+  <div class="s-line"></div>
+  <div class="s-step">
+    <div class="s-circle">📊</div>
+    <div class="s-label">Dashboard</div>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="preview-body">
+  <div class="preview-wrap" id="previewForm">
+
+    <!-- Extracted overview banner -->
+    <div class="overview-banner">
+      <div class="ob-left">
+        <h3 id="ob-name">{{ profile.name or "—" }}</h3>
+        <p  id="ob-email">{{ profile.email or "—" }}</p>
+      </div>
+      <div class="ob-stats">
+        <div class="ob-stat">
+          <div class="val" id="ob-skills">{{ profile.skills | length }}</div>
+          <div class="lbl">Skills Found</div>
+        </div>
+        <div class="ob-stat">
+          <div class="val" id="ob-edu">{{ profile.education | length }}</div>
+          <div class="lbl">Education</div>
+        </div>
+        <div class="ob-stat">
+          <div class="val" id="ob-exp">{{ profile.experience | length }}</div>
+          <div class="lbl">Experience</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Completeness bar -->
+    <div class="cbar">
+      <div class="cbar-top">
+        <span>Profile Completeness</span>
+        <span class="pct" id="pctLbl">0%</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" id="bFill" style="width:0%"></div></div>
+    </div>
+
+    <!-- Personal Information -->
+    <div class="psec">
+      <div class="psec-hd"><div class="psec-ico">👤</div><h3>Personal Information</h3></div>
+      <div class="fgrid">
+        <div class="field">
+          <label>Full Name</label>
+          <input id="fName" type="text" value="{{ profile.name }}" oninput="recalc()">
+        </div>
+        <div class="field">
+          <label>Phone</label>
+          <input id="fPhone" type="text" value="{{ profile.phone }}" oninput="recalc()">
+        </div>
+      </div>
+      <div class="fgrid one">
+        <div class="field">
+          <label>Email</label>
+          <input id="fEmail" type="email" value="{{ profile.email }}" oninput="recalc()">
+        </div>
+      </div>
+    </div>
+
+    <!-- Education -->
+    <div class="psec">
+      <div class="psec-hd"><div class="psec-ico">🎓</div><h3>Education</h3></div>
+      <div id="eduList">
+        {% for edu in profile.education %}
+        <div class="erow">
+          <input type="text" value="{{ edu.title }}" placeholder="Degree / Title">
+          <input type="text" value="{{ edu.institution }}" placeholder="Institution">
+          <span class="erow-rm" onclick="delRow(this)">✕</span>
+        </div>
+        {% endfor %}
+      </div>
+      <button class="btn-add" onclick="addEdu()">+ Add Education</button>
+    </div>
+
+    <!-- Experience -->
+    <div class="psec">
+      <div class="psec-hd"><div class="psec-ico">🏢</div><h3>Experience</h3></div>
+      <div id="expList">
+        {% for exp in profile.experience %}
+        <div class="erow">
+          <input type="text" value="{{ exp.role }}" placeholder="Role">
+          <input type="text" value="{{ exp.company }}" placeholder="Company / Event">
+          <input type="text" value="{{ exp.year }}" placeholder="Year">
+          <span class="erow-rm" onclick="delRow(this)">✕</span>
+        </div>
+        {% endfor %}
+      </div>
+      <button class="btn-add" onclick="addExp()">+ Add Experience</button>
+    </div>
+
+    <!-- Skills -->
+    <div class="psec">
+      <div class="psec-hd"><div class="psec-ico">🔧</div><h3>Skills</h3></div>
+      <div class="stags" id="skillsWrap">
+        {% for skill in profile.skills %}
+        <span class="stag">{{ skill }} <span class="stag-rm" onclick="removeSkill(this)">✕</span></span>
+        {% endfor %}
+      </div>
+      <div class="sarow">
+        <input type="text" id="skillInput" placeholder="Add a skill…">
+        <button class="btn-icon" onclick="addSkill()">+</button>
+      </div>
+    </div>
+
+    <button class="btn-submit" id="btnSubmit">
+      📋&nbsp; Submit DEET Profile
+    </button>
+
+  </div>
+</div>
+{% endblock %}

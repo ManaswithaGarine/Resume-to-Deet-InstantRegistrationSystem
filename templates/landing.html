@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}DEET — Resume to Instant Profile{% endblock %}
+
+{% block content %}
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">⚡ Hackathon-Ready &bull; Instant Registration</div>
+    <h1>Resume to DEET<br><span>Instant Registration</span></h1>
+    <p>Upload your resume and get an auto-filled DEET jobseeker profile in seconds.
+       Plus career insights, skill gap analysis, and personalised course recommendations.</p>
+    <a href="/upload" class="btn-cta">Get Started &rarr;</a>
+  </div>
+</div>
+
+<div class="features">
+  <div class="fcard">
+    <div class="fcard-icon">📄</div>
+    <h3>Smart Resume Parsing</h3>
+    <p>Upload a PDF and our NLP engine extracts name, email, skills, education,
+       and experience automatically.</p>
+  </div>
+  <div class="fcard">
+    <div class="fcard-icon">⚡</div>
+    <h3>Instant DEET Profile</h3>
+    <p>Auto-filled, editable DEET jobseeker form — ready to submit in seconds, not hours.</p>
+  </div>
+  <div class="fcard">
+    <div class="fcard-icon">🛡️</div>
+    <h3>Career Intelligence</h3>
+    <p>Role matching, skill gap analysis, and course recommendations to accelerate your career.</p>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+{% block title %}Career Dashboard — DEET{% endblock %}
+
+{% block stepper %}
+<div class="stepper">
+  <div class="s-step">
+    <div class="s-circle done">✓</div>
+    <div class="s-label">Upload</div>
+  </div>
+  <div class="s-line done"></div>
+  <div class="s-step">
+    <div class="s-circle done">✓</div>
+    <div class="s-label">Preview</div>
+  </div>
+  <div class="s-line done"></div>
+  <div class="s-step">
+    <div class="s-circle active">📊</div>
+    <div class="s-label active">Dashboard</div>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+{% set best   = analytics.best_role   or {} %}
+{% set gap    = analytics.skill_gap   or {} %}
+{% set roles  = analytics.role_matches or [] %}
+{% set pct    = analytics.completeness or 0 %}
+{% set bdown  = analytics.breakdown   or [] %}
+
+<div class="dash-body">
+  <div class="dash-wrap">
+
+    <!-- Hero banner -->
+    <div class="dash-hero">
+      <div class="dh-left">
+        <h2>Career Analytics Dashboard</h2>
+        <p>Profile submitted — here's your intelligence report for {{ profile.name }}</p>
+      </div>
+      <div class="dh-stats">
+        <div class="dh-stat">
+          <div class="val">{{ pct }}%</div>
+          <div class="lbl">Profile Complete</div>
+        </div>
+        <div class="dh-stat">
+          <div class="val">{{ best.score or 0 }}%</div>
+          <div class="lbl">Best Match</div>
+        </div>
+        <div class="dh-stat">
+          <div class="val">{{ profile.skills | length }}</div>
+          <div class="lbl">Skills Found</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 1: Gauge | Role Selector | Best Fit -->
+    <div class="dgrid three">
+
+      <!-- Completeness Gauge -->
+      <div class="dcard">
+        <div class="dcard-hd">
+          <h4>Profile Completeness</h4>
+          <span class="badge {{ 'g' if pct >= 60 else 'y' }}">
+            {{ "Excellent" if pct >= 80 else ("Good" if pct >= 60 else "Incomplete") }}
+          </span>
+        </div>
+        <div class="gauge-wrap">
+          <svg width="130" height="78" viewBox="0 0 130 78" style="display:block;margin:0 auto;">
+            <path d="M15,72 A55,55,0,0,1,115,72" fill="none" stroke="#e2e8f0" stroke-width="10" stroke-linecap="round"/>
+            <path id="gArc" d="M15,72 A55,55,0,0,1,115,72" fill="none" stroke="#1a9e8f" stroke-width="10"
+              stroke-linecap="round" stroke-dasharray="173" stroke-dashoffset="173"
+              style="transition:stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1)"/>
+          </svg>
+          <span class="gauge-big" id="gVal">{{ pct }}%</span>
+          <div class="gauge-sub">out of 100%</div>
+        </div>
+      </div>
+
+      <!-- Role Match -->
+      <div class="dcard">
+        <div class="dcard-hd">
+          <h4>Role Match Analysis</h4>
+          <span class="badge y">Select Role</span>
+        </div>
+        <div class="rsel">
+          <select id="roleSelect">
+            {% for r in roles %}
+            <option value="{{ r.role }}" {{ "selected" if r.role == best.role else "" }}>
+              {{ r.role }}
+            </option>
+            {% endfor %}
+          </select>
+          <span class="rsel-arr">▾</span>
+        </div>
+        <div id="matchBars">
+          {% for b in bdown %}
+          <div class="mrow">
+            <span class="nm">{{ b.name }}</span>
+            <div class="mtrack">
+              <div class="mfill" style="width:{{ b.pct }}%;background:{{ '#1a9e8f' if b.pct >= 70 else ('#f59e0b' if b.pct >= 40 else '#ef4444') }}"></div>
+            </div>
+            <span class="pc">{{ b.pct }}%</span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Best Fit -->
+      <div class="dcard best-card">
+        <div class="dcard-hd">
+          <h4>Best Role Fit</h4>
+          <span class="badge g">Recommended</span>
+        </div>
+        <div class="best-role">{{ best.role or "—" }}</div>
+        <div class="best-desc">{{ best.description or "" }}</div>
+        <div class="best-score-lbl">Match Score</div>
+        <div class="best-score">{{ best.score or 0 }}%</div>
+      </div>
+
+    </div>
+
+    <!-- Row 2: Skill Gap | Skills You Have -->
+    <div class="dgrid two">
+
+      <div class="dcard">
+        <div class="dcard-hd">
+          <h4>Skill Gap Analysis</h4>
+          {% set sev = gap.severity or "moderate" %}
+          <span id="sevBadge" class="badge {{ 'r' if sev == 'high' else ('g' if sev == 'low' else 'y') }}">
+            {{ sev | capitalize }}
+          </span>
+        </div>
+        <div style="font-size:.76rem;color:var(--muted);margin-bottom:.2rem;">
+          Missing for <strong id="gapRole" style="color:var(--navy)">{{ best.role }}</strong>
+        </div>
+        <div class="gpills" id="gapPills">
+          {% for s in gap.missing or [] %}
+          <span class="gpill">{{ s }}</span>
+          {% endfor %}
+        </div>
+        <div class="sev-row">
+          <div class="sev-dot {{ 'h' if sev == 'high' else ('l' if sev == 'low' else 'm') }}" id="sevDot"></div>
+          Severity: <strong id="sevText" style="color:var(--navy)">{{ sev | capitalize }}</strong>
+        </div>
+      </div>
+
+      <div class="dcard">
+        <div class="dcard-hd">
+          <h4>Skills You Have</h4>
+          <span class="badge g">{{ profile.skills | length }} skills</span>
+        </div>
+        <div class="hpills">
+          {% for skill in profile.skills %}
+          <span class="hpill">{{ skill }}</span>
+          {% endfor %}
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Courses -->
+    <div class="dcard" style="margin-bottom:1.1rem;">
+      <div class="dcard-hd">
+        <h4>Recommended Courses to Bridge Gaps</h4>
+        <span class="badge b" id="courseBadge">For {{ best.role }}</span>
+      </div>
+      <div class="clist" id="courseList">
+        {% for c in gap.courses or [] %}
+        <div class="citem">
+          <div class="citem-ico">{{ c.icon }}</div>
+          <div>
+            <div class="citem-name">{{ c.name }}</div>
+            <div class="citem-tag">{{ c.provider }} · {{ c.duration }}</div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Start Over -->
+    <div class="restart-bar">
+      <p>Want to try with a different resume or profile?</p>
+      <a href="/" class="btn-restart">↩ Start Over with New Resume</a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

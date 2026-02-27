@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Upload Resume — DEET{% endblock %}
+
+{% block stepper %}
+<div class="stepper">
+  <div class="s-step">
+    <div class="s-circle active">1</div>
+    <div class="s-label active">Upload</div>
+  </div>
+  <div class="s-line"></div>
+  <div class="s-step">
+    <div class="s-circle">✏</div>
+    <div class="s-label">Preview</div>
+  </div>
+  <div class="s-line"></div>
+  <div class="s-step">
+    <div class="s-circle">📊</div>
+    <div class="s-label">Dashboard</div>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="page-body">
+  <div class="upload-card">
+    <h2>Upload Your Resume</h2>
+    <p class="sub">Upload a PDF resume to auto-generate your DEET jobseeker profile</p>
+
+    <input type="file" id="fInput" accept=".pdf" style="display:none">
+
+    <div class="drop-zone" id="dropZone">
+      <div class="dz-icon">⬆️</div>
+      <h3>Drag &amp; drop your resume here</h3>
+      <p>or click to browse</p>
+      <div class="dz-hint">📎 PDF files only &bull; Max 10MB</div>
+    </div>
+
+    <div id="chipArea"></div>
+    <div id="msgArea"></div>
+    <div class="spin" id="spinner" style="display:none"></div>
+    <p id="processingMsg" style="display:none;text-align:center;font-size:.82rem;color:var(--muted);margin-top:.5rem;">
+      Extracting skills, education &amp; experience…
+    </p>
+  </div>
+</div>
+{% endblock %}
