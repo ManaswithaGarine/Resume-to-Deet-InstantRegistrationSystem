@@ -82,8 +82,8 @@
       <div id="eduList">
         {% for edu in profile.education %}
         <div class="erow">
-          <input type="text" value="{{ edu.title }}" placeholder="Degree / Title">
-          <input type="text" value="{{ edu.institution }}" placeholder="Institution">
+          <input type="text" value="{{ edu.title }}" placeholder="Institution">
+          <input type="text" value="{{ edu.institution }}" placeholder="Degree / Title">
           <span class="erow-rm" onclick="delRow(this)">✕</span>
         </div>
         {% endfor %}
